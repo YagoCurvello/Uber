@@ -105,16 +105,23 @@ public class CadastroActivity extends AppCompatActivity {
         auth.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+
                 if (task.isSuccessful()){
-                    Toast.makeText(getApplicationContext(), "Usuario Cadastrado com sucesso", Toast.LENGTH_SHORT).show();
-                    usuario.setIdUsuario(auth.getUid());
-                    usuario.salvar();
-                    if (usuario.isMotorista()){
-                        startActivity(new Intent(CadastroActivity.this, MotoristaActivity.class));
-                        finish();
-                    }else {
-                        startActivity(new Intent(CadastroActivity.this, MapsActivity.class));
-                        finish();
+
+                    try {
+                        Toast.makeText(getApplicationContext(), "Usuario Cadastrado com sucesso", Toast.LENGTH_SHORT).show();
+                        usuario.setIdUsuario(auth.getUid());
+                        usuario.salvar();
+                        UsuarioFirebase.atualizarNomeUsuarioFb(usuario.getName());
+                        if (usuario.isMotorista()){
+                            startActivity(new Intent(CadastroActivity.this, MotoristaActivity.class));
+                            finish();
+                        }else {
+                            startActivity(new Intent(CadastroActivity.this, MapsActivity.class));
+                            finish();
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
 
                 } else {

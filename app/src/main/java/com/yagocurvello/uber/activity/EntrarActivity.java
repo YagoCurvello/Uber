@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.yagocurvello.uber.R;
 import com.yagocurvello.uber.config.ConfigFirebase;
+import com.yagocurvello.uber.helper.UsuarioFirebase;
 import com.yagocurvello.uber.model.Usuario;
 
 public class EntrarActivity extends AppCompatActivity {
@@ -96,23 +97,13 @@ public class EntrarActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    reference.child(auth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            usuario = snapshot.getValue(Usuario.class);
-                            if (usuario.isMotorista()){
-                                startActivity(new Intent(EntrarActivity.this, MotoristaActivity.class));
-                                finish();
-                            }else {
-                                startActivity(new Intent(EntrarActivity.this, MapsActivity.class));
-                                finish();
-                            }
-                        }
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                        }
-                    });
-
+                    UsuarioFirebase.redirecionaUsuario(EntrarActivity.this);
+                }else {
+                    try {
+                        throw task.getException();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

@@ -1,6 +1,8 @@
 package com.yagocurvello.uber.helper;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
@@ -12,7 +14,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.yagocurvello.uber.activity.EntrarActivity;
+import com.yagocurvello.uber.activity.MapsActivity;
+import com.yagocurvello.uber.activity.MotoristaActivity;
 import com.yagocurvello.uber.config.ConfigFirebase;
 import com.yagocurvello.uber.model.Usuario;
 
@@ -130,6 +138,27 @@ public class UsuarioFirebase {
         return usuario;
     }
 
+    public static void redirecionaUsuario(Activity activity){
 
+        DatabaseReference databaseReference = ConfigFirebase.getFirebaseDatabase().child("usuarios")
+                .child(getIdUsuario());
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Usuario usuario = snapshot.getValue(Usuario.class);
+                if (usuario.isMotorista()){
+                    activity.startActivity(new Intent(activity, MotoristaActivity.class));
+                    activity.finish();
+                }else {
+                    activity.startActivity(new Intent(activity, MapsActivity.class));
+                    activity.finish();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
 
 }
