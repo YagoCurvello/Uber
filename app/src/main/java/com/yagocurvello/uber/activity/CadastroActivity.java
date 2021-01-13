@@ -35,8 +35,6 @@ public class CadastroActivity extends AppCompatActivity {
 
     private Usuario usuario;
     private FirebaseAuth auth;
-    private DatabaseReference databaseReferencePassageiro;
-    private DatabaseReference databaseReferenceMotorista;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +57,14 @@ public class CadastroActivity extends AppCompatActivity {
                 if (verificaTexto(usuario)){
                     cadastrar();
                 }
+            }
+        });
+
+        textViewEntrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(CadastroActivity.this, EntrarActivity.class));
+                finish();
             }
         });
 
@@ -101,9 +107,16 @@ public class CadastroActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
                     Toast.makeText(getApplicationContext(), "Usuario Cadastrado com sucesso", Toast.LENGTH_SHORT).show();
+                    usuario.setIdUsuario(auth.getUid());
                     usuario.salvar();
-                    startActivity(new Intent(CadastroActivity.this, MapsActivity.class));
-                    finish();
+                    if (usuario.isMotorista()){
+                        startActivity(new Intent(CadastroActivity.this, MotoristaActivity.class));
+                        finish();
+                    }else {
+                        startActivity(new Intent(CadastroActivity.this, MapsActivity.class));
+                        finish();
+                    }
+
                 } else {
                     String error;
                     try {

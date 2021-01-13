@@ -17,8 +17,6 @@ public class Usuario implements Serializable {
     private boolean isMotorista = false;
 
     public Usuario() {
-        DatabaseReference databaseReference = ConfigFirebase.getFirebaseDatabase().child("usuarios");
-        this.setIdUsuario(databaseReference.push().getKey());
     }
 
     public boolean isMotorista() {
