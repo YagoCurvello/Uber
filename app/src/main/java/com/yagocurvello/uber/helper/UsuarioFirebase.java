@@ -114,7 +114,6 @@ public class UsuarioFirebase {
         HashMap<String, Object> usuarioMap = new HashMap<>();
         usuarioMap.put("email", usuario.getEmail());
         usuarioMap.put("name", usuario.getName());
-        usuarioMap.put("foto", usuario.getFoto());
 
         usuarioDatabaseRef.updateChildren(usuarioMap);
 
@@ -127,12 +126,6 @@ public class UsuarioFirebase {
         usuario.setEmail(firebaseUser.getEmail());
         usuario.setName(firebaseUser.getDisplayName());
         usuario.setIdUsuario(firebaseUser.getUid());
-
-        if (firebaseUser.getPhotoUrl() == null){
-            usuario.setFoto("");
-        }else {
-            usuario.setFoto(firebaseUser.getPhotoUrl().toString());
-        }
 
         return usuario;
     }

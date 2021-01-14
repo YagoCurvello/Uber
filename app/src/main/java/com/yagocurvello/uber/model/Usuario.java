@@ -24,7 +24,8 @@ public class Usuario implements Serializable {
     private String email;
     private String senha;
     private String IdUsuario;
-    private String foto;
+    private String latitude;
+    private String longitde;
     private boolean isMotorista = false;
 
     public Usuario() {
@@ -63,7 +64,6 @@ public class Usuario implements Serializable {
         this.senha = senha;
     }
 
-    @Exclude
     public String getIdUsuario() {
         return IdUsuario;
     }
@@ -72,12 +72,20 @@ public class Usuario implements Serializable {
         IdUsuario = idUsuario;
     }
 
-    public String getFoto() {
-        return foto;
+    public String getLatitude() {
+        return latitude;
     }
 
-    public void setFoto(String foto) {
-        this.foto = foto;
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitde() {
+        return longitde;
+    }
+
+    public void setLongitde(String longitde) {
+        this.longitde = longitde;
     }
 
     public void salvar(){
