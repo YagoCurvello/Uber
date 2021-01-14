@@ -79,9 +79,6 @@ public class PassageiroActivity extends AppCompatActivity implements OnMapReadyC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_passageiro);
 
-        auth = ConfigFirebase.getFirebaseAutenticacao();
-        reference = ConfigFirebase.getFirebaseDatabase();
-
         configIniciais();
 
         recuperaStatusRequisicao();
@@ -156,6 +153,9 @@ public class PassageiroActivity extends AppCompatActivity implements OnMapReadyC
         buttonChamar = findViewById(R.id.buttonChamar);
         linearLayoutDestino = findViewById(R.id.linearLayoutDestino);
 
+        auth = ConfigFirebase.getFirebaseAutenticacao();
+        reference = ConfigFirebase.getFirebaseDatabase();
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Passageiro");
         setSupportActionBar(toolbar);
@@ -179,15 +179,18 @@ public class PassageiroActivity extends AppCompatActivity implements OnMapReadyC
                     requisicaoList.add(dataSnapshot.getValue(Requisicao.class));
                 }
                 Collections.reverse(requisicaoList);
-                requisicao = requisicaoList.get(0);
+                if (requisicaoList != null && requisicaoList.size() > 0){
+                    requisicao = requisicaoList.get(0);
 
-                switch (requisicao.getStatus()){
-                    case Requisicao.STATUS_AGUARDANDO:
-                        linearLayoutDestino.setVisibility(View.GONE);
-                        buttonChamar.setText("Cancelar Uber");
-                        uberChamado = true;
-                        break;
+                    switch (requisicao.getStatus()){
+                        case Requisicao.STATUS_AGUARDANDO:
+                            linearLayoutDestino.setVisibility(View.GONE);
+                            buttonChamar.setText("Cancelar Uber");
+                            uberChamado = true;
+                            break;
+                    }
                 }
+
             }
 
             @Override
