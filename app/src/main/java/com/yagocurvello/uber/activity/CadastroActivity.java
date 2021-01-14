@@ -117,7 +117,7 @@ public class CadastroActivity extends AppCompatActivity {
                             startActivity(new Intent(CadastroActivity.this, MotoristaActivity.class));
                             finish();
                         }else {
-                            startActivity(new Intent(CadastroActivity.this, MapsActivity.class));
+                            startActivity(new Intent(CadastroActivity.this, PassageiroActivity.class));
                             finish();
                         }
                     }catch (Exception e){

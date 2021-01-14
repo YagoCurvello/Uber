@@ -18,9 +18,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.yagocurvello.uber.activity.EntrarActivity;
-import com.yagocurvello.uber.activity.MapsActivity;
 import com.yagocurvello.uber.activity.MotoristaActivity;
+import com.yagocurvello.uber.activity.PassageiroActivity;
 import com.yagocurvello.uber.config.ConfigFirebase;
 import com.yagocurvello.uber.model.Usuario;
 
@@ -151,7 +150,7 @@ public class UsuarioFirebase {
                     activity.startActivity(new Intent(activity, MotoristaActivity.class));
                     activity.finish();
                 }else {
-                    activity.startActivity(new Intent(activity, MapsActivity.class));
+                    activity.startActivity(new Intent(activity, PassageiroActivity.class));
                     activity.finish();
                 }
             }

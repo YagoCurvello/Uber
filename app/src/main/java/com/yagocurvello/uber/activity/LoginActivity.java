@@ -32,8 +32,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         getSupportActionBar().hide();
 
-        Permissao.validarPermissoes(permissoes, this, 1);
-
         buttonEntrar = findViewById(R.id.buttonEntrar);
         buttonCadastrar = findViewById(R.id.buttonCadastrar);
 
@@ -57,6 +55,9 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        Permissao.validarPermissoes(permissoes, this, 1);
+
         auth = ConfigFirebase.getFirebaseAutenticacao();
         if (auth.getCurrentUser() != null){
             UsuarioFirebase.redirecionaUsuario(LoginActivity.this);
