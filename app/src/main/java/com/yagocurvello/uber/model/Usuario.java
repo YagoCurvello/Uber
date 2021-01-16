@@ -1,19 +1,8 @@
 package com.yagocurvello.uber.model;
 
-import android.app.Activity;
-import android.content.Intent;
-
-import androidx.annotation.NonNull;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.ValueEventListener;
-import com.yagocurvello.uber.activity.MotoristaActivity;
-import com.yagocurvello.uber.activity.PassageiroActivity;
 import com.yagocurvello.uber.config.ConfigFirebase;
-import com.yagocurvello.uber.helper.UsuarioFirebase;
 
 import java.io.Serializable;
 
@@ -25,7 +14,7 @@ public class Usuario implements Serializable {
     private String senha;
     private String IdUsuario;
     private String latitude;
-    private String longitde;
+    private String longitude;
     private boolean isMotorista = false;
 
     public Usuario() {
@@ -80,12 +69,12 @@ public class Usuario implements Serializable {
         this.latitude = latitude;
     }
 
-    public String getLongitde() {
-        return longitde;
+    public String getLongitude() {
+        return longitude;
     }
 
-    public void setLongitde(String longitde) {
-        this.longitde = longitde;
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 
     public void salvar(){

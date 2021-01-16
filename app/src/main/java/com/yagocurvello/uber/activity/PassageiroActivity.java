@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -20,8 +19,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -29,7 +26,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -221,7 +217,7 @@ public class PassageiroActivity extends AppCompatActivity implements OnMapReadyC
 
         Usuario usuarioPassageiro = UsuarioFirebase.recuperarUsuarioLogado();
         usuarioPassageiro.setLatitude(String.valueOf(localPassageiro.latitude));
-        usuarioPassageiro.setLongitde(String.valueOf(localPassageiro.longitude));
+        usuarioPassageiro.setLongitude(String.valueOf(localPassageiro.longitude));
 
         Requisicao requisicao = new Requisicao();
         requisicao.setDestino(destino);

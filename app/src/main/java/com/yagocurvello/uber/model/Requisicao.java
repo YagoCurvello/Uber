@@ -3,6 +3,8 @@ package com.yagocurvello.uber.model;
 import com.google.firebase.database.DatabaseReference;
 import com.yagocurvello.uber.config.ConfigFirebase;
 
+import java.io.Serializable;
+
 public class Requisicao {
 
     private String id, status;
