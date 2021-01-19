@@ -4,6 +4,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.yagocurvello.uber.config.ConfigFirebase;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Requisicao {
 
@@ -66,6 +68,16 @@ public class Requisicao {
         setId(requisicoes.push().getKey());
 
         requisicoes.child(getId()).setValue(this);
+    }
 
+    public void atualizar(){
+        DatabaseReference reference = ConfigFirebase.getFirebaseDatabase();
+        DatabaseReference requisicoes = reference.child("requisicoes").child(getId());
+
+        Map objeto = new HashMap();
+        objeto.put("motorista", getMotorista());
+        objeto.put("status", getStatus());
+
+        requisicoes.updateChildren(objeto);
     }
 }

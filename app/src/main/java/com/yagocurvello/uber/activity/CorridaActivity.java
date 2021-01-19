@@ -1,6 +1,7 @@
 package com.yagocurvello.uber.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -26,7 +27,12 @@ import androidx.core.app.ActivityCompat;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.yagocurvello.uber.R;
+import com.yagocurvello.uber.config.ConfigFirebase;
 import com.yagocurvello.uber.model.Requisicao;
 import com.yagocurvello.uber.model.Usuario;
 
@@ -37,9 +43,12 @@ public class CorridaActivity extends AppCompatActivity implements OnMapReadyCall
     private LocationListener locationListener;
     private LatLng localMotorista;
 
+    private DatabaseReference reference;
+
     private Button buttonAceitar;
     private Requisicao requisicao;
     private Usuario motorista;
+    private String idRequisicao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,28 +57,82 @@ public class CorridaActivity extends AppCompatActivity implements OnMapReadyCall
 
         configIniciais();
 
-        Bundle bundle = getIntent().getExtras();
 
+        if (getIntent().getExtras().containsKey("idRequisicao")
+        && getIntent().getExtras().containsKey("motorista")){
+            Bundle bundle = getIntent().getExtras();
+            motorista = (Usuario) bundle.getSerializable("motorista");
+            idRequisicao = bundle.getString("idRequisicao");
+            verificaStatusRequisicao();
+        }
 
         buttonAceitar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                requisicao = new Requisicao();
+                requisicao.setId(idRequisicao);
+                requisicao.setMotorista(motorista);
+                requisicao.setStatus(Requisicao.STATUS_A_CAMINHO);
+
+                requisicao.atualizar();
 
             }
         });
 
     }
 
+    @SuppressLint("RestrictedApi")
     private void configIniciais(){
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Iniciar Corrida");
+        getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+
+        reference = ConfigFirebase.getFirebaseDatabase();
 
         buttonAceitar = findViewById(R.id.buttonAceitarCorrida);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+    }
+
+    private void verificaStatusRequisicao(){
+        DatabaseReference requisicoes = reference.child("requisicoes").child(idRequisicao);
+        requisicoes.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                requisicao = snapshot.getValue(Requisicao.class);
+
+                switch (requisicao.getStatus()){
+                    case Requisicao.STATUS_AGUARDANDO:
+                        requisicaoAguardando();
+                        break;
+
+                    case Requisicao.STATUS_A_CAMINHO:
+
+                        break;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void requisicaoAguardando(){
+
+        buttonAceitar.setText("aceitar corrida");
+
+    }
+
+    private void requisicaoACaminho(){
+
+        buttonAceitar.setText("A caminho");
 
     }
 
@@ -93,7 +156,7 @@ public class CorridaActivity extends AppCompatActivity implements OnMapReadyCall
                 mMap.clear();
                 mMap.addMarker(new MarkerOptions().position(localMotorista).title("Meu local")
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.carro)));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(localMotorista,18));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(localMotorista,15));
 
             }
             @Override

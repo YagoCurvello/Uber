@@ -161,6 +161,7 @@ public class MotoristaActivity extends AppCompatActivity {
                     recyclerViewReq.setVisibility(View.GONE);
                 }
 
+                requisicoes.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()){
                     Requisicao req = dataSnapshot.getValue(Requisicao.class);
                     requisicoes.add(req);
