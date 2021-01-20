@@ -72,10 +72,7 @@ public class MotoristaActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view,int position) {
                 Requisicao requisicao = requisicoes.get(position);
-                Intent i = new Intent(MotoristaActivity.this, CorridaActivity.class);
-                i.putExtra("idRequisicao", requisicao.getId());
-                i.putExtra("motorista", motorista);
-                startActivity(i);
+                abrirTelaCorrida(requisicao, motorista, false);
             }
 
             @Override
@@ -99,8 +96,45 @@ public class MotoristaActivity extends AppCompatActivity {
 
         recyclerViewReq = findViewById(R.id.recyclerRequisicoes);
         textViewResultado = findViewById(R.id.textViewResultado);
+    }
 
+    private void verificaStatusRequisicao(){
 
+        Usuario usuarioLogado = UsuarioFirebase.recuperarUsuarioLogado();
+        DatabaseReference reference = ConfigFirebase.getFirebaseDatabase();
+        DatabaseReference requisicoes = reference.child("requisicoes");
+        Query requisicoesPesquisa = requisicoes.orderByChild("motorista/idUsuario")
+                .equalTo(usuarioLogado.getIdUsuario());
+        requisicoesPesquisa.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    Requisicao requisicao = dataSnapshot.getValue(Requisicao.class);
+
+                    if (requisicao.getStatus().equals(Requisicao.STATUS_A_CAMINHO)
+                            || requisicao.getStatus().equals(Requisicao.STATUS_VIAGEM)){
+
+                        abrirTelaCorrida(requisicao, motorista, true);
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    private void abrirTelaCorrida(Requisicao requisicao, Usuario motorista, boolean reqAtiva){
+
+        Intent i = new Intent(MotoristaActivity.this, CorridaActivity.class);
+        i.putExtra("idRequisicao", requisicao.getId());
+        i.putExtra("motorista", motorista);
+        i.putExtra("reqAtiva", reqAtiva);
+        startActivity(i);
 
     }
 
@@ -202,5 +236,6 @@ public class MotoristaActivity extends AppCompatActivity {
         super.onStart();
         motorista = UsuarioFirebase.recuperarUsuarioLogado();
         recuperarRequisicoes();
+        verificaStatusRequisicao();
     }
 }
