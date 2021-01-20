@@ -15,6 +15,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -42,12 +44,16 @@ public class CorridaActivity extends AppCompatActivity implements OnMapReadyCall
     private LocationManager locationManager;
     private LocationListener locationListener;
     private LatLng localMotorista;
+    private LatLng localPassageiro ;
+    private Marker marcadorMotorista;
+    private Marker marcadorPassageiro;
 
     private DatabaseReference reference;
 
     private Button buttonAceitar;
     private Requisicao requisicao;
     private Usuario motorista;
+    private Usuario passageiro;
     private String idRequisicao;
 
     @Override
@@ -74,9 +80,8 @@ public class CorridaActivity extends AppCompatActivity implements OnMapReadyCall
                 requisicao.setId(idRequisicao);
                 requisicao.setMotorista(motorista);
                 requisicao.setStatus(Requisicao.STATUS_A_CAMINHO);
-
                 requisicao.atualizar();
-
+                requisicaoACaminho();
             }
         });
 
@@ -105,6 +110,9 @@ public class CorridaActivity extends AppCompatActivity implements OnMapReadyCall
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 requisicao = snapshot.getValue(Requisicao.class);
+                passageiro = requisicao.getPassageiro();
+                localPassageiro = new LatLng(Double.parseDouble(passageiro.getLatitude()),
+                        Double.parseDouble(passageiro.getLongitude()));
 
                 switch (requisicao.getStatus()){
                     case Requisicao.STATUS_AGUARDANDO:
@@ -112,7 +120,7 @@ public class CorridaActivity extends AppCompatActivity implements OnMapReadyCall
                         break;
 
                     case Requisicao.STATUS_A_CAMINHO:
-
+                        requisicaoACaminho();
                         break;
                 }
             }
@@ -125,14 +133,49 @@ public class CorridaActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
     private void requisicaoAguardando(){
-
         buttonAceitar.setText("aceitar corrida");
 
     }
 
     private void requisicaoACaminho(){
-
         buttonAceitar.setText("A caminho");
+        //Exibe marcador do motorista
+        adicionaMarcadorMotorista(localMotorista, motorista.getName());
+
+        //Exibe o marcador do passageiro
+        adicionaMarcadorPassageiro(localPassageiro, passageiro.getName());
+
+        centralizarMarcadores(marcadorMotorista, marcadorPassageiro);
+    }
+
+    private void adicionaMarcadorMotorista(LatLng localizacao, String titulo){
+
+        if (marcadorMotorista != null) marcadorMotorista.remove();
+
+        marcadorMotorista = mMap.addMarker(new MarkerOptions().position(localizacao).title(titulo)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.carro)));
+    }
+
+    private void adicionaMarcadorPassageiro(LatLng localizacao, String titulo){
+
+        if (marcadorPassageiro != null) marcadorPassageiro.remove();
+
+        marcadorPassageiro = mMap.addMarker(new MarkerOptions().position(localizacao).title(titulo)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.usuario)));
+    }
+
+    private void centralizarMarcadores(Marker marker1, Marker marker2){
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(marker1.getPosition());
+        builder.include(marker2.getPosition());
+        LatLngBounds bounds = builder.build();
+
+        int largura = getResources().getDisplayMetrics().widthPixels;
+        int altura = getResources().getDisplayMetrics().heightPixels;
+        int espacoInterno = (int) (largura * 0.2);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, largura, altura, espacoInterno));
 
     }
 
